@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="moment_item_margin">12dp</dimen>
+    <dimen name="moment_avatar_size">48dp</dimen>
+</resources>
