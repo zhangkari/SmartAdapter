@@ -8,12 +8,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import org.karic.smartadapter.SmartAdapter;
 import org.karic.smartadapter.ViewBinder;
+import org.karic.smartrefreshlayout.SmartRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    SwipeRefreshLayout refreshLayout;
+    SmartRefreshLayout refreshLayout;
     SmartAdapter adapter;
     List<Object> data;
 
@@ -23,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         refreshLayout = findViewById(R.id.refreshLayout);
-        data = new ArrayList<>();
+        data = loadData();
         adapter = new SmartAdapter();
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
         adapter.setData(data);
@@ -58,11 +59,39 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onRefresh() {
                 refreshLayout.setRefreshing(false);
-                data.add(Math.abs((int) System.currentTimeMillis() % 10000));
-                data.add("No." + (System.currentTimeMillis() % 200));
-                data.add(System.currentTimeMillis() % 2 == 0);
-                adapter.refreshData(data, true);
+                adapter.setData(loadData());
             }
         });
+
+        refreshLayout.setOnLoadMoreListener(new SmartRefreshLayout.OnLoadMoreListener() {
+            @Override
+            public void onLoadMore() {
+                refreshLayout.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        refreshLayout.setLoadingMore(false);
+                        adapter.refreshData(loadData(), false);
+                        refreshLayout.setLoadComplete(adapter.getItemCount() >= 20);
+                    }
+                }, 3000);
+
+            }
+        });
+    }
+
+    private List<Object> loadData() {
+        List<Object> data = new ArrayList<>();
+        data.add(Math.abs((int) System.currentTimeMillis() % 90000));
+        data.add("No." + (System.currentTimeMillis() % 2000));
+        data.add(System.currentTimeMillis() % 2 == 0);
+
+        data.add(Math.abs((int) System.currentTimeMillis() % 60000));
+        data.add("No." + (System.currentTimeMillis() % 1000));
+        data.add(System.currentTimeMillis() % 2 == 0);
+
+        data.add(Math.abs((int) System.currentTimeMillis() % 120000));
+        data.add("No." + (System.currentTimeMillis() % 12000));
+        data.add(System.currentTimeMillis() % 2 == 0);
+        return data;
     }
 }

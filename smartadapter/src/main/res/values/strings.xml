@@ -1,2 +1,4 @@
 <resources>
+    <string name="loading_more">加载中</string>
+    <string name="load_complete">加载完成</string>
 </resources>

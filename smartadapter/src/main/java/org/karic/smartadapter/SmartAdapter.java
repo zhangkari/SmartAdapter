@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SmartAdapter extends RecyclerView.Adapter {
-    private List<?> mData;
+    private List<Object> mData;
     private Linker mLinker;
 
     public SmartAdapter() {
@@ -53,6 +53,16 @@ public class SmartAdapter extends RecyclerView.Adapter {
         if (data != null) {
             mData.addAll(data);
         }
+        notifyDataSetChanged();
+    }
+
+    public void addData(Object obj) {
+        mData.add(obj);
+        notifyDataSetChanged();
+    }
+
+    public void removeLast() {
+        mData.remove(mData.size() - 1);
         notifyDataSetChanged();
     }
 
