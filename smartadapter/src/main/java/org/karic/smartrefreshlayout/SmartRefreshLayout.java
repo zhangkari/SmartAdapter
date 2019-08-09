@@ -21,9 +21,6 @@ public class SmartRefreshLayout extends SwipeRefreshLayout {
     private boolean mSetupFlag;
     private boolean mIsLoading;
 
-    private int mLastY;
-    private boolean mScrollDown;
-
     public SmartRefreshLayout(@NonNull Context context) {
         super(context);
     }
@@ -36,6 +33,12 @@ public class SmartRefreshLayout extends SwipeRefreshLayout {
         mLoadListener = listener;
     }
 
+    @Override
+    public void setRefreshing(boolean refreshing) {
+        super.setRefreshing(refreshing);
+        mLoadComplete = false;
+    }
+
     public void setLoadingMore(boolean loadingMore) {
         if (mRecyclerView == null || mAdapter == null) {
             return;
@@ -43,17 +46,39 @@ public class SmartRefreshLayout extends SwipeRefreshLayout {
 
         mIsLoading = loadingMore;
         if (loadingMore) {
-            Object obj = mAdapter.getLast();
-            if (!(obj instanceof VMFooterLoading)) {
-                mAdapter.addData(new VMFooterLoading());
-            }
+            addLoadingMore();
         } else {
-            Object obj = mAdapter.getLast();
-            if (obj instanceof VMFooterLoading) {
-                mAdapter.removeLast();
-            }
+            removeLoadingMore();
         }
         mLoadComplete = false;
+    }
+
+    private void addLoadingMore() {
+        Object obj = mAdapter.getLast();
+        if (!(obj instanceof VMFooterLoading)) {
+            mAdapter.addData(new VMFooterLoading());
+        }
+    }
+
+    private void removeLoadingMore() {
+        Object obj = mAdapter.getLast();
+        if (obj instanceof VMFooterLoading) {
+            mAdapter.removeLast();
+        }
+    }
+
+    private void addLoadComplete() {
+        Object obj = mAdapter.getLast();
+        if (!(obj instanceof VMFooterComplete)) {
+            mAdapter.addData(new VMFooterComplete());
+        }
+    }
+
+    private void removeLoadComplete() {
+        Object obj = mAdapter.getLast();
+        if (obj instanceof VMFooterComplete) {
+            mAdapter.removeLast();
+        }
     }
 
     public void setLoadComplete(boolean loadComplete) {
@@ -63,9 +88,9 @@ public class SmartRefreshLayout extends SwipeRefreshLayout {
         }
 
         if (loadComplete) {
-            mAdapter.addData(new VMFooterComplete());
+            addLoadComplete();
         } else {
-            mAdapter.removeLast();
+            removeLoadComplete();
         }
     }
 

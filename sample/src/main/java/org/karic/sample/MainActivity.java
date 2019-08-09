@@ -14,14 +14,12 @@ import org.karic.smartadapter.SmartAdapter;
 import org.karic.smartadapter.ViewBinder;
 import org.karic.smartrefreshlayout.SmartRefreshLayout;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     SmartRefreshLayout refreshLayout;
     SmartAdapter adapter;
     List<Object> data;
-    int counter = 0;
 
     @Override
     public void onCreate(Bundle b) {
@@ -29,7 +27,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         refreshLayout = findViewById(R.id.refreshLayout);
-        data = loadData();
         adapter = new SmartAdapter();
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
         adapter.setData(data);
@@ -40,54 +37,44 @@ public class MainActivity extends AppCompatActivity {
         adapter.register(String.class, new StringBinder());
         adapter.register(Boolean.class, new BooleanBinder());
 
+
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                refreshLayout.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        adapter.setData(loadData());
-                        refreshLayout.setRefreshing(false);
-                        refreshLayout.setLoadingMore(false);
-                    }
-                }, 3000);
-
+                refreshData();
             }
         });
 
         refreshLayout.setOnLoadMoreListener(new SmartRefreshLayout.OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
-                refreshLayout.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        refreshLayout.setLoadingMore(false);
-                        adapter.refreshData(loadData(), false);
-                        refreshLayout.setLoadComplete(adapter.getItemCount() >= 20);
-                    }
-                }, 3000);
+                loadMore();
+            }
+        });
+
+        refreshData();
+    }
+
+    private void refreshData() {
+        DataModel.loadData(new DataModel.OnLoadCallback() {
+            @Override
+            public void onSuccess(List<Object> data) {
+                refreshLayout.setRefreshing(false);
+                adapter.setData(data);
             }
         });
     }
 
-    private List<Object> loadData() {
-        List<Object> data = new ArrayList<>();
-        data.add(counter);
-        data.add("No." + counter);
-        data.add(counter % 2 == 0);
-        counter++;
-
-        data.add(counter);
-        data.add("No." + counter);
-        data.add(counter % 2 == 0);
-        counter++;
-
-        data.add(counter);
-        data.add("No." + counter);
-        data.add(counter % 2 == 0);
-        counter++;
-
-        return data;
+    private void loadMore() {
+        DataModel.loadData(new DataModel.OnLoadCallback() {
+            @Override
+            public void onSuccess(List<Object> data) {
+                // TODO  这三行必须要按照此顺序调用， 不然会出现显示异常
+                refreshLayout.setLoadingMore(false);
+                adapter.refreshData(data, true);
+                refreshLayout.setLoadComplete(adapter.getItemCount() >= 20);
+            }
+        });
     }
 
     public static class StringBinder extends ViewBinder<String> {

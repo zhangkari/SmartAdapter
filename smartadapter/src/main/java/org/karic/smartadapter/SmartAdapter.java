@@ -48,12 +48,12 @@ public class SmartAdapter extends RecyclerView.Adapter {
     }
 
     public void setData(List<?> data) {
-        refreshData(data, true);
+        refreshData(data, false);
     }
 
     @SuppressWarnings("unchecked")
-    public void refreshData(List data, boolean eraseOld) {
-        if (eraseOld) {
+    public void refreshData(List data, boolean keepOld) {
+        if (!keepOld) {
             mData.clear();
         }
         if (data != null) {
