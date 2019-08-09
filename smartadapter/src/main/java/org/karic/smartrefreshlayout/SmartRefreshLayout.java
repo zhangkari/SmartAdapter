@@ -2,14 +2,13 @@ package org.karic.smartrefreshlayout;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.TableRow;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import org.karic.smartadapter.SmartAdapter;
 
 public class SmartRefreshLayout extends SwipeRefreshLayout {
@@ -19,6 +18,8 @@ public class SmartRefreshLayout extends SwipeRefreshLayout {
     private SmartAdapter mAdapter;
     private OnLoadMoreListener mLoadListener;
     private boolean mLoadComplete;
+    private boolean mSetupFlag;
+    private boolean mIsLoading;
 
     private int mLastY;
     private boolean mScrollDown;
@@ -40,11 +41,19 @@ public class SmartRefreshLayout extends SwipeRefreshLayout {
             return;
         }
 
+        mIsLoading = loadingMore;
         if (loadingMore) {
-            mAdapter.addData(new VMFooterLoading());
+            Object obj = mAdapter.getLast();
+            if (!(obj instanceof VMFooterLoading)) {
+                mAdapter.addData(new VMFooterLoading());
+            }
         } else {
-            mAdapter.removeLast();
+            Object obj = mAdapter.getLast();
+            if (obj instanceof VMFooterLoading) {
+                mAdapter.removeLast();
+            }
         }
+        mLoadComplete = false;
     }
 
     public void setLoadComplete(boolean loadComplete) {
@@ -82,27 +91,33 @@ public class SmartRefreshLayout extends SwipeRefreshLayout {
             return;
         }
         try {
-            mAdapter = (SmartAdapter) mRecyclerView.getAdapter();
+            if (!mSetupFlag) {
+                mAdapter = (SmartAdapter) mRecyclerView.getAdapter();
+            }
+            mSetupFlag = true;
+            mAdapter.register(VMFooterComplete.class, new FooterCompleteBinder());
+            mAdapter.register(VMFooterLoading.class, new FooterLoadingBinder());
         } catch (Exception e) {
             throw new RuntimeException("must set SmartAdapter in RecyclerView !");
         }
-    }
 
-    @Override
-    public void onStopNestedScroll(View target) {
-        super.onStopNestedScroll(target);
-
-        if (mLoadListener != null && mAdapter != null &&
-                hasScrolledToBottom(mRecyclerView)) {
-
-            Log.d(TAG, "onStopNestedScroll mLoadComplete:" + mLoadComplete);
-            if (mLoadComplete) {
-                setLoadComplete(true);
-            } else {
-                setLoadingMore(true);
-                mLoadListener.onLoadMore();
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
             }
-        }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (dy > 0 && hasScrolledToBottom(recyclerView) && !mIsLoading && !mLoadComplete) {
+                    if (mLoadListener != null) {
+                        mLoadListener.onLoadMore();
+                    }
+                    setLoadingMore(true);
+                }
+            }
+        });
     }
 
     private static boolean hasScrolledToBottom(RecyclerView recyclerView) {

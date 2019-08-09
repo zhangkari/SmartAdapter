@@ -4,7 +4,7 @@ import org.karic.smartadapter.R;
 import org.karic.smartadapter.ViewBinder;
 
 class FooterCompleteBinder extends ViewBinder<VMFooterComplete> {
-    public FooterCompleteBinder(int layout) {
+    public FooterCompleteBinder() {
         super(R.layout.sa_view_binder_complete);
     }
 

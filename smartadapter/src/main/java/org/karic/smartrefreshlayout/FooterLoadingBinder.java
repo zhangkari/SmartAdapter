@@ -4,7 +4,7 @@ import org.karic.smartadapter.R;
 import org.karic.smartadapter.ViewBinder;
 
 class FooterLoadingBinder extends ViewBinder<VMFooterLoading> {
-    public FooterLoadingBinder(int layout) {
+    public FooterLoadingBinder() {
         super(R.layout.sa_view_binder_loading);
     }
 

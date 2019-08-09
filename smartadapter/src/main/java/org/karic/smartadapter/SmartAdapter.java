@@ -1,8 +1,11 @@
 package org.karic.smartadapter;
 
+import android.util.Log;
 import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import org.karic.smartadapter.linker.Linker;
 import org.karic.smartadapter.linker.TypeLinker;
 
@@ -23,22 +26,25 @@ public class SmartAdapter extends RecyclerView.Adapter {
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ViewBinder binder;
         if (viewType < 0) {
-            binder = new DefaultViewBinder();
+            return new ViewHolder(new DefaultViewBinder());
         } else {
             binder = mLinker.getBinder(mLinker.getTypeByIndex(viewType));
             if (binder == null) {
-                binder = new DefaultViewBinder();
+                return new ViewHolder(new DefaultViewBinder());
             }
         }
-
-        return new ViewHolder(binder.inflate(parent)).setBinder(binder);
+        Log.d("binderX ++", binder.toString());
+        binder = ViewBinder.clone(binder);
+        Log.d("binderX --", binder.toString());
+        binder.onCreate(parent);
+        return new ViewHolder(binder);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ViewHolder viewHolder = (ViewHolder) holder;
-        viewHolder.getBinder().bindData(mData.get(position));
+        viewHolder.binder.bindData(mData.get(position));
     }
 
     public void setData(List<?> data) {
@@ -59,6 +65,10 @@ public class SmartAdapter extends RecyclerView.Adapter {
     public void addData(Object obj) {
         mData.add(obj);
         notifyDataSetChanged();
+    }
+
+    public Object getLast() {
+        return mData.get(mData.size() - 1);
     }
 
     public void removeLast() {

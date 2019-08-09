@@ -2,10 +2,14 @@ package org.karic.sample;
 
 import android.os.Bundle;
 import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import org.karic.sample.binder.BooleanBinder;
+import org.karic.sample.binder.IntegerBinder;
 import org.karic.smartadapter.SmartAdapter;
 import org.karic.smartadapter.ViewBinder;
 import org.karic.smartrefreshlayout.SmartRefreshLayout;
@@ -17,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
     SmartRefreshLayout refreshLayout;
     SmartAdapter adapter;
     List<Object> data;
+    int counter = 0;
 
     @Override
     public void onCreate(Bundle b) {
@@ -31,35 +36,22 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
-        adapter.register(Integer.class, new ViewBinder<Integer>(R.layout.layout_item_int) {
-            @Override
-            public void bindData(Integer data) {
-                TextView tv = finder.find(R.id.tv_value);
-                tv.setText(String.valueOf(data));
-            }
-        });
-
-        adapter.register(String.class, new ViewBinder<String>(R.layout.layout_item_string) {
-            @Override
-            public void bindData(String data) {
-                TextView tv = finder.find(R.id.tv_value);
-                tv.setText(String.valueOf(data));
-            }
-        });
-
-        adapter.register(Boolean.class, new ViewBinder<Boolean>(R.layout.layout_item_boolean) {
-            @Override
-            public void bindData(Boolean data) {
-                TextView tv = finder.find(R.id.tv_value);
-                tv.setText(String.valueOf(data));
-            }
-        });
+        adapter.register(Integer.class, new IntegerBinder());
+        adapter.register(String.class, new StringBinder());
+        adapter.register(Boolean.class, new BooleanBinder());
 
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                refreshLayout.setRefreshing(false);
-                adapter.setData(loadData());
+                refreshLayout.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.setData(loadData());
+                        refreshLayout.setRefreshing(false);
+                        refreshLayout.setLoadingMore(false);
+                    }
+                }, 3000);
+
             }
         });
 
@@ -74,24 +66,39 @@ public class MainActivity extends AppCompatActivity {
                         refreshLayout.setLoadComplete(adapter.getItemCount() >= 20);
                     }
                 }, 3000);
-
             }
         });
     }
 
     private List<Object> loadData() {
         List<Object> data = new ArrayList<>();
-        data.add(Math.abs((int) System.currentTimeMillis() % 90000));
-        data.add("No." + (System.currentTimeMillis() % 2000));
-        data.add(System.currentTimeMillis() % 2 == 0);
+        data.add(counter);
+        data.add("No." + counter);
+        data.add(counter % 2 == 0);
+        counter++;
 
-        data.add(Math.abs((int) System.currentTimeMillis() % 60000));
-        data.add("No." + (System.currentTimeMillis() % 1000));
-        data.add(System.currentTimeMillis() % 2 == 0);
+        data.add(counter);
+        data.add("No." + counter);
+        data.add(counter % 2 == 0);
+        counter++;
 
-        data.add(Math.abs((int) System.currentTimeMillis() % 120000));
-        data.add("No." + (System.currentTimeMillis() % 12000));
-        data.add(System.currentTimeMillis() % 2 == 0);
+        data.add(counter);
+        data.add("No." + counter);
+        data.add(counter % 2 == 0);
+        counter++;
+
         return data;
+    }
+
+    public static class StringBinder extends ViewBinder<String> {
+        public StringBinder() {
+            super(R.layout.layout_item_string);
+        }
+
+        @Override
+        public void bindData(String data) {
+            TextView tv = find(R.id.tv_value);
+            tv.setText(data);
+        }
     }
 }
