@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'maven'
 
 def build = rootProject.ext.android
 def support = rootProject.ext.support
@@ -34,4 +35,26 @@ dependencies {
     testImplementation test.junit
     androidTestImplementation test.runner
     androidTestImplementation test.espresso
+}
+
+def artifactId = "smartadapter"
+group "com.tomtom.tmui"
+version "0.0.1"
+
+def mavenRepoUrl = "https://repo.rdc.aliyun.com/repository/41296-release-xkPVm5"
+def USER = project.property("USER")
+def PASSWORD = project.property("PASSWORD")
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: mavenRepoUrl) {
+                authentication(userName: USER, password: PASSWORD)
+            }
+
+            pom.version = "$project.version"
+            pom.artifactId = "$artifactId"
+            pom.groupId = "$project.group"
+        }
+    }
 }
