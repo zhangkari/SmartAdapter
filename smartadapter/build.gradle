@@ -1,9 +1,17 @@
 apply plugin: 'com.android.library'
-apply plugin: 'maven'
+apply plugin: 'com.novoda.bintray-release'
 
 def build = rootProject.ext.android
 def support = rootProject.ext.support
 def test = rootProject.ext.test
+
+
+def USER = "zhangkari"
+def GROUP = "com.tomtom.widget.smartadapter"
+def ARTIFACT = "smartadapter"
+def VERSION = "0.0.1"
+def DESCRIPTION = "An adapter that bind multiple types dynamicly"
+def URL = "https://github.com/zhangkari/smartadapter"
 
 android {
     compileSdkVersion build.compileSdk
@@ -13,8 +21,8 @@ android {
     defaultConfig {
         minSdkVersion build.minSdk
         targetSdkVersion build.targetSdk
-        versionCode 1
-        versionName "1.0"
+        versionCode 10000
+        versionName "1.0.0"
 
         testInstrumentationRunner test.testRunner
     }
@@ -26,6 +34,14 @@ android {
         }
     }
 
+    publish {
+        userOrg = USER
+        groupId = GROUP
+        artifactId = ARTIFACT
+        publishVersion = VERSION
+        desc = DESCRIPTION
+        website = URL
+    }
 }
 
 dependencies {
@@ -35,26 +51,4 @@ dependencies {
     testImplementation test.junit
     androidTestImplementation test.runner
     androidTestImplementation test.espresso
-}
-
-def artifactId = "smartadapter"
-group "com.tomtom.tmui"
-version "0.0.1"
-
-def mavenRepoUrl = "https://repo.rdc.aliyun.com/repository/41296-release-xkPVm5"
-def USER = project.property("USER")
-def PASSWORD = project.property("PASSWORD")
-
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            repository(url: mavenRepoUrl) {
-                authentication(userName: USER, password: PASSWORD)
-            }
-
-            pom.version = "$project.version"
-            pom.artifactId = "$artifactId"
-            pom.groupId = "$project.group"
-        }
-    }
 }
