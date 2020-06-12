@@ -1,6 +1,6 @@
 package org.karic.smartrefreshlayout;
 
-class VMFooterComplete {
+public final class VMFooterComplete {
     public String text;
 
     public VMFooterComplete() {

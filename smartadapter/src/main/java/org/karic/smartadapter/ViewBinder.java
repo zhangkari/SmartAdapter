@@ -22,6 +22,14 @@ public abstract class ViewBinder<Bean> {
         this.layout = layout;
     }
 
+    public static <Binder extends ViewBinder> Binder fetch(Binder binder) {
+        if (binder.view == null) {
+            return binder;
+        } else {
+            return clone(binder);
+        }
+    }
+
     @SuppressWarnings("unchecked")
     private static <Binder extends ViewBinder> Binder reflectDefault(Binder binder) {
         try {
@@ -47,7 +55,7 @@ public abstract class ViewBinder<Bean> {
     }
 
     @SuppressWarnings("unchecked")
-    public static <Binder extends ViewBinder> Binder clone(Binder binder) {
+    private static <Binder extends ViewBinder> Binder clone(Binder binder) {
         Binder instance = reflectDefault(binder);
         if (instance == null) {
             instance = reflectParent(binder);

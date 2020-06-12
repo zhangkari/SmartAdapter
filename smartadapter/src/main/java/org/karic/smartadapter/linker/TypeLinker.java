@@ -1,6 +1,7 @@
 package org.karic.smartadapter.linker;
 
 import android.util.ArrayMap;
+
 import org.karic.smartadapter.ViewBinder;
 
 import java.util.ArrayList;
@@ -17,9 +18,11 @@ public class TypeLinker implements Linker {
     }
 
     @Override
-    public void unregister(Class<?> clazz) {
-        map.remove(clazz);
-        types.remove(clazz);
+    public void clear() {
+        map.clear();
+        types.clear();
+        map = null;
+        types = null;
     }
 
     @Override

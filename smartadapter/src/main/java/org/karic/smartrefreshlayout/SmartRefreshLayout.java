@@ -1,6 +1,7 @@
 package org.karic.smartrefreshlayout;
 
 import android.content.Context;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -10,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import org.karic.smartadapter.SmartAdapter;
+
+import java.util.List;
 
 public class SmartRefreshLayout extends SwipeRefreshLayout {
     private static final String TAG = "SmartRefreshLayout";
@@ -39,18 +42,48 @@ public class SmartRefreshLayout extends SwipeRefreshLayout {
         mLoadComplete = false;
     }
 
+    public void refreshComplete(List<?> data, OnDataAvailableListener listener) {
+        setRefreshing(false);
+        setLoadCompleteSafe(false);
+        if (listener != null) {
+            listener.onDataAvailable(data, mAdapter);
+        }
+    }
+
+    public void loadMoreComplete(List<?> data, OnDataAvailableListener listener) {
+        setLoadingMoreSafe(false);
+        if (listener != null) {
+            listener.onDataAvailable(data, mAdapter);
+        }
+        setLoadCompleteSafe(Utils.isEmpty(data));
+    }
+
+    @Deprecated
     public void setLoadingMore(boolean loadingMore) {
+        setLoadingMoreSafe(loadingMore);
+    }
+
+    private void setLoadingMoreSafe(boolean loadingMore) {
+        if (Looper.getMainLooper() != Looper.myLooper()) {
+            throw new RuntimeException("Do not invoke me outside main-thread !");
+        }
+
+        mIsLoading = loadingMore;
         if (mRecyclerView == null || mAdapter == null) {
             return;
         }
 
-        mIsLoading = loadingMore;
         if (loadingMore) {
-            addLoadingMore();
+            Object obj = mAdapter.getLast();
+            if (!(obj instanceof VMFooterLoading)) {
+                mAdapter.addData(new VMFooterLoading());
+            }
         } else {
-            removeLoadingMore();
+            Object obj = mAdapter.getLast();
+            if (obj instanceof VMFooterLoading) {
+                mAdapter.removeLast();
+            }
         }
-        mLoadComplete = false;
     }
 
     private void addLoadingMore() {
@@ -81,16 +114,27 @@ public class SmartRefreshLayout extends SwipeRefreshLayout {
         }
     }
 
+    @Deprecated
     public void setLoadComplete(boolean loadComplete) {
+        setLoadCompleteSafe(loadComplete);
+    }
+
+    private void setLoadCompleteSafe(boolean loadComplete) {
+        if (Looper.getMainLooper() != Looper.myLooper()) {
+            throw new RuntimeException("Do not invoke me outside main-thread !");
+        }
+
         mLoadComplete = loadComplete;
         if (mRecyclerView == null || mAdapter == null) {
             return;
         }
 
         if (loadComplete) {
-            addLoadComplete();
+            mAdapter.addData(new VMFooterComplete());
         } else {
-            removeLoadComplete();
+            if (mAdapter.getLast() instanceof VMFooterComplete) {
+                mAdapter.removeLast();
+            }
         }
     }
 
@@ -154,5 +198,9 @@ public class SmartRefreshLayout extends SwipeRefreshLayout {
 
     public interface OnLoadMoreListener {
         void onLoadMore();
+    }
+
+    public interface OnDataAvailableListener {
+        void onDataAvailable(List<?> data, SmartAdapter adapter);
     }
 }

@@ -59,8 +59,12 @@ public class MainActivity extends AppCompatActivity {
         DataModel.loadData(new DataModel.OnLoadCallback() {
             @Override
             public void onSuccess(List<Object> data) {
-                refreshLayout.setRefreshing(false);
-                adapter.setData(data);
+                refreshLayout.refreshComplete(data, new SmartRefreshLayout.OnDataAvailableListener() {
+                    @Override
+                    public void onDataAvailable(List<?> data, SmartAdapter adapter) {
+                        adapter.refreshData(data, false);
+                    }
+                });
             }
         });
     }
@@ -69,10 +73,12 @@ public class MainActivity extends AppCompatActivity {
         DataModel.loadData(new DataModel.OnLoadCallback() {
             @Override
             public void onSuccess(List<Object> data) {
-                // TODO  这三行必须要按照此顺序调用， 不然会出现显示异常
-                refreshLayout.setLoadingMore(false);
-                adapter.refreshData(data, true);
-                refreshLayout.setLoadComplete(adapter.getItemCount() >= 20);
+                refreshLayout.loadMoreComplete(data, new SmartRefreshLayout.OnDataAvailableListener() {
+                    @Override
+                    public void onDataAvailable(List<?> data, SmartAdapter adapter) {
+                        adapter.refreshData(data, true);
+                    }
+                });
             }
         });
     }

@@ -1,6 +1,5 @@
 package org.karic.smartadapter;
 
-import android.util.Log;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -8,6 +7,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.karic.smartadapter.linker.Linker;
 import org.karic.smartadapter.linker.TypeLinker;
+import org.karic.smartrefreshlayout.VMFooterComplete;
+import org.karic.smartrefreshlayout.VMFooterLoading;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,9 +34,7 @@ public class SmartAdapter extends RecyclerView.Adapter {
                 return new ViewHolder(new DefaultViewBinder());
             }
         }
-        Log.d("binderX ++", binder.toString());
-        binder = ViewBinder.clone(binder);
-        Log.d("binderX --", binder.toString());
+        binder = ViewBinder.fetch(binder);
         binder.onCreate(parent);
         return new ViewHolder(binder);
     }
@@ -68,12 +67,17 @@ public class SmartAdapter extends RecyclerView.Adapter {
     }
 
     public Object getLast() {
-        return mData.get(mData.size() - 1);
+        if (mData.size() >= 1) {
+            return mData.get(mData.size() - 1);
+        }
+        return null;
     }
 
     public void removeLast() {
-        mData.remove(mData.size() - 1);
-        notifyDataSetChanged();
+        if (mData.size() >= 1) {
+            mData.remove(mData.size() - 1);
+            notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -84,9 +88,6 @@ public class SmartAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemViewType(int position) {
         Class<?> cls = mData.get(position).getClass();
-        if (cls == null) {
-            return -1;
-        }
         return mLinker.indexOfType(cls);
     }
 
@@ -94,7 +95,15 @@ public class SmartAdapter extends RecyclerView.Adapter {
         mLinker.register(cls, holder);
     }
 
-    public void unregister(Class cls) {
-        mLinker.unregister(cls);
+    public void clear(Class cls) {
+        mLinker.clear();
+    }
+
+    public void registerLoadingMore(ViewBinder<VMFooterLoading> vb) {
+        mLinker.register(VMFooterLoading.class, vb);
+    }
+
+    public void registerLoadComplete(ViewBinder<VMFooterComplete> vb) {
+        mLinker.register(VMFooterComplete.class, vb);
     }
 }
