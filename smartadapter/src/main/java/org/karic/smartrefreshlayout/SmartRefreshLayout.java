@@ -164,8 +164,8 @@ public class SmartRefreshLayout extends SwipeRefreshLayout {
                 mAdapter = (SmartAdapter) mRecyclerView.getAdapter();
             }
             mSetupFlag = true;
-            mAdapter.register(VMFooterComplete.class, new FooterCompleteBinder());
-            mAdapter.register(VMFooterLoading.class, new FooterLoadingBinder());
+            mAdapter.register(VMFooterComplete.class, new FooterCompleteBinder(), false);
+            mAdapter.register(VMFooterLoading.class, new FooterLoadingBinder(), false);
         } catch (Exception e) {
             throw new RuntimeException("must set SmartAdapter in RecyclerView !");
         }

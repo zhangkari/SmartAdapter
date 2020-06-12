@@ -92,7 +92,25 @@ public class SmartAdapter extends RecyclerView.Adapter {
     }
 
     public void register(Class cls, ViewBinder holder) {
-        mLinker.register(cls, holder);
+        register(cls, holder, true);
+    }
+
+    /**
+     * bind data type and view
+     *
+     * @param cls            data type
+     * @param holder         view binder
+     * @param replaceExisted whether replace view binder registered before
+     */
+    public void register(Class cls, ViewBinder holder, boolean replaceExisted) {
+        if (replaceExisted) {
+            mLinker.register(cls, holder);
+        } else {
+            ViewBinder vb = mLinker.getBinder(cls);
+            if (vb == null) {
+                mLinker.register(cls, holder);
+            }
+        }
     }
 
     public void clear(Class cls) {
