@@ -43,6 +43,7 @@ public class SmartAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ViewHolder viewHolder = (ViewHolder) holder;
+        viewHolder.binder.holder = viewHolder;
         viewHolder.binder.bindData(mData.get(position));
     }
 
