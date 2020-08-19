@@ -141,15 +141,15 @@ public abstract class ViewBinder<Bean> {
         find(id).setEnabled(enabled);
     }
 
-    protected void setOnClickListener(View.OnClickListener listener) {
+    public void setOnClickListener(View.OnClickListener listener) {
         listenerInfo.onClickListener = listener;
     }
 
-    protected void setOnCheckedChangedListener(RadioGroup.OnCheckedChangeListener listener) {
+    public void setOnCheckedChangedListener(RadioGroup.OnCheckedChangeListener listener) {
         listenerInfo.radioGroupCheckedListener = listener;
     }
 
-    protected void setOnCheckedChangedListener(CompoundButton.OnCheckedChangeListener listener) {
+    public void setOnCheckedChangedListener(CompoundButton.OnCheckedChangeListener listener) {
         listenerInfo.onCheckedChangeListener = listener;
     }
 
