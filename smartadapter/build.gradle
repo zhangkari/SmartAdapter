@@ -9,7 +9,7 @@ def test = rootProject.ext.test
 def USER = "zhangkari"
 def GROUP = "com.tomtom.widget.smartadapter"
 def ARTIFACT = "smartadapter"
-def VERSION = "1.0.4"
+def VERSION = "1.0.5"
 def DESCRIPTION = "An adapter that bind multiple types dynamicly"
 def URL = "https://github.com/zhangkari/smartadapter"
 
@@ -21,8 +21,8 @@ android {
     defaultConfig {
         minSdkVersion build.minSdk
         targetSdkVersion build.targetSdk
-        versionCode 10004
-        versionName "1.0.4"
+        versionCode 10005
+        versionName "1.0.5"
 
         testInstrumentationRunner test.testRunner
     }

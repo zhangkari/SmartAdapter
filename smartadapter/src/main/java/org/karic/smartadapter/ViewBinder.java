@@ -149,7 +149,7 @@ public abstract class ViewBinder<Bean> {
         listenerInfo.onCheckedChangeListener = listener;
     }
 
-    protected int getPosition() {
+    public int getPosition() {
         return holder.getAdapterPosition();
     }
 
