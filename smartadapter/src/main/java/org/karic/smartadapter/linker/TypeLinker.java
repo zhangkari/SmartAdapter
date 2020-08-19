@@ -8,11 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TypeLinker implements Linker {
-    private ArrayMap<Class, ViewBinder> map = new ArrayMap<>(16);
+    private ArrayMap<Class<?>, ViewBinder<?>> map = new ArrayMap<>(16);
     private List<Class<?>> types = new ArrayList<>(16);
 
     @Override
-    public void register(Class<?> clazz, ViewBinder h) {
+    public <T> void register(Class<T> clazz, ViewBinder<T> h) {
         map.put(clazz, h);
         types.add(clazz);
     }
@@ -25,9 +25,10 @@ public class TypeLinker implements Linker {
         types = null;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public ViewBinder getBinder(Class<?> clazz) {
-        return map.get(clazz);
+    public <T> ViewBinder<T> getBinder(Class<T> clazz) {
+        return (ViewBinder<T>) map.get(clazz);
     }
 
     @Override

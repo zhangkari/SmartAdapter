@@ -18,17 +18,16 @@ public abstract class ViewBinder<Bean> {
     static final String TAG = "ViewBinder";
 
     int layout;
-    View view;
-
-    ListenerInfo listenerInfo;
-    ViewHolder holder;
+    protected View view;
+    protected ListenerInfo listenerInfo;
+    private ViewHolder holder;
 
     public ViewBinder(@LayoutRes int layout) {
         this.layout = layout;
         listenerInfo = new ListenerInfo();
     }
 
-    public static <Binder extends ViewBinder> Binder fetch(Binder binder) {
+    public static <Binder extends ViewBinder<?>> Binder fetch(Binder binder) {
         if (binder.view == null) {
             return binder;
         } else {
@@ -37,9 +36,9 @@ public abstract class ViewBinder<Bean> {
     }
 
     @SuppressWarnings("unchecked")
-    private static <Binder extends ViewBinder> Binder reflectDefault(Binder binder) {
+    private static <Binder extends ViewBinder<?>> Binder reflectDefault(Binder binder) {
         try {
-            Constructor constructor = binder.getClass().getDeclaredConstructor();
+            Constructor<?> constructor = binder.getClass().getDeclaredConstructor();
             constructor.setAccessible(true);
             return (Binder) constructor.newInstance();
         } catch (Exception e) {
@@ -49,9 +48,9 @@ public abstract class ViewBinder<Bean> {
     }
 
     @SuppressWarnings("unchecked")
-    private static <Binder extends ViewBinder> Binder reflectParent(Binder binder) {
+    private static <Binder extends ViewBinder<?>> Binder reflectParent(Binder binder) {
         try {
-            Constructor constructor = binder.getClass().getDeclaredConstructor(int.class);
+            Constructor<?> constructor = binder.getClass().getDeclaredConstructor(int.class);
             constructor.setAccessible(true);
             return (Binder) constructor.newInstance(binder.layout);
         } catch (Exception e) {
@@ -61,7 +60,7 @@ public abstract class ViewBinder<Bean> {
     }
 
     @SuppressWarnings("unchecked")
-    private static <Binder extends ViewBinder> Binder clone(Binder binder) {
+    private static <Binder extends ViewBinder<?>> Binder clone(Binder binder) {
         checkConstructor(binder.getClass());
 
         Binder instance = reflectDefault(binder);
@@ -76,13 +75,14 @@ public abstract class ViewBinder<Bean> {
         return instance;
     }
 
+    @SuppressWarnings("rawtypes")
     private static void checkConstructor(Class<? extends ViewBinder> clazz) {
-        Constructor[] constructors = clazz.getDeclaredConstructors();
+        Constructor<?>[] constructors = clazz.getDeclaredConstructors();
         if (constructors.length != 1) {
             throw new RuntimeException("ViewBinder only allow 1 constructor !");
         }
 
-        Constructor c = constructors[0];
+        Constructor<?> c = constructors[0];
         Class<?>[] params = c.getParameterTypes();
 
         if (params.length == 0) {
@@ -133,10 +133,6 @@ public abstract class ViewBinder<Bean> {
         find(id).setVisibility(visibility);
     }
 
-    protected void setOnClickListener(@IdRes int id, View.OnClickListener listener) {
-        find(id).setOnClickListener(listener);
-    }
-
     protected void setEnabled(@IdRes int id, boolean enabled) {
         find(id).setEnabled(enabled);
     }
@@ -161,21 +157,9 @@ public abstract class ViewBinder<Bean> {
         return view;
     }
 
-    protected View.OnClickListener getOnClickListener() {
-        return listenerInfo.onClickListener;
-    }
-
-    protected RadioGroup.OnCheckedChangeListener getRadioGroupCheckedChangeListener() {
-        return listenerInfo.radioGroupCheckedListener;
-    }
-
-    protected CompoundButton.OnCheckedChangeListener getCheckedChangeListener() {
-        return listenerInfo.onCheckedChangeListener;
-    }
-
-    static class ListenerInfo {
-        View.OnClickListener onClickListener;
-        RadioGroup.OnCheckedChangeListener radioGroupCheckedListener;
-        CompoundButton.OnCheckedChangeListener onCheckedChangeListener;
+    protected static class ListenerInfo {
+        public View.OnClickListener onClickListener;
+        public RadioGroup.OnCheckedChangeListener radioGroupCheckedListener;
+        public CompoundButton.OnCheckedChangeListener onCheckedChangeListener;
     }
 }

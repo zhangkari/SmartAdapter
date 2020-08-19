@@ -1,7 +1,8 @@
 package org.karic.sample;
 
 import android.os.Bundle;
-import android.widget.TextView;
+import android.view.View;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -10,6 +11,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import org.karic.sample.binder.BooleanBinder;
 import org.karic.sample.binder.IntegerBinder;
+import org.karic.sample.binder.StringBinder;
 import org.karic.smartadapter.SmartAdapter;
 import org.karic.smartadapter.ViewBinder;
 import org.karic.smartrefreshlayout.SmartRefreshLayout;
@@ -33,10 +35,32 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
-        adapter.register(Integer.class, new IntegerBinder());
-        adapter.register(String.class, new StringBinder());
-        adapter.register(Boolean.class, new BooleanBinder());
+        ViewBinder<Integer> intBinder = new IntegerBinder();
+        intBinder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(v.getContext(), "int click:" + v.getTag(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        adapter.register(Integer.class, intBinder);
 
+        ViewBinder<String> strBinder = new StringBinder();
+        strBinder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(v.getContext(), "String click:" + v.getTag(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        adapter.register(String.class, strBinder);
+
+        ViewBinder<Boolean> boolBinder = new BooleanBinder();
+        boolBinder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(v.getContext(), "bool click:" + v.getTag(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        adapter.register(Boolean.class, boolBinder);
 
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -81,17 +105,5 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         });
-    }
-
-    public static class StringBinder extends ViewBinder<String> {
-        public StringBinder() {
-            super(R.layout.layout_item_string);
-        }
-
-        @Override
-        public void bindData(String data) {
-            TextView tv = find(R.id.tv_value);
-            tv.setText(data);
-        }
     }
 }

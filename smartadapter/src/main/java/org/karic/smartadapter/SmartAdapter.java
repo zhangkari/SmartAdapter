@@ -13,7 +13,7 @@ import org.karic.smartrefreshlayout.VMFooterLoading;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SmartAdapter extends RecyclerView.Adapter {
+public class SmartAdapter extends RecyclerView.Adapter<ViewHolder> {
     private List<Object> mData;
     private Linker mLinker;
 
@@ -24,8 +24,8 @@ public class SmartAdapter extends RecyclerView.Adapter {
 
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ViewBinder binder;
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        ViewBinder<?> binder;
         if (viewType < 0) {
             return new ViewHolder(new DefaultViewBinder());
         } else {
@@ -41,18 +41,15 @@ public class SmartAdapter extends RecyclerView.Adapter {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        ViewHolder viewHolder = (ViewHolder) holder;
-        viewHolder.binder.holder = viewHolder;
-        viewHolder.binder.bindData(mData.get(position));
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        holder.binder.bindData(mData.get(position));
     }
 
     public void setData(List<?> data) {
         refreshData(data, false);
     }
 
-    @SuppressWarnings("unchecked")
-    public void refreshData(List data, boolean keepOld) {
+    public void refreshData(List<?> data, boolean keepOld) {
         if (!keepOld) {
             mData.clear();
         }
@@ -92,7 +89,7 @@ public class SmartAdapter extends RecyclerView.Adapter {
         return mLinker.indexOfType(cls);
     }
 
-    public void register(Class cls, ViewBinder holder) {
+    public <T> void register(Class<T> cls, ViewBinder<T> holder) {
         register(cls, holder, true);
     }
 
@@ -103,18 +100,18 @@ public class SmartAdapter extends RecyclerView.Adapter {
      * @param holder         view binder
      * @param replaceExisted whether replace view binder registered before
      */
-    public void register(Class cls, ViewBinder holder, boolean replaceExisted) {
+    public <T> void register(Class<T> cls, ViewBinder<T> holder, boolean replaceExisted) {
         if (replaceExisted) {
             mLinker.register(cls, holder);
         } else {
-            ViewBinder vb = mLinker.getBinder(cls);
+            ViewBinder<T> vb = mLinker.getBinder(cls);
             if (vb == null) {
                 mLinker.register(cls, holder);
             }
         }
     }
 
-    public void clear(Class cls) {
+    public void clear(Class<?> cls) {
         mLinker.clear();
     }
 

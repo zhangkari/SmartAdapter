@@ -14,5 +14,7 @@ public class IntegerBinder extends ViewBinder<Integer> {
     public void bindData(Integer data) {
         TextView tv = find(R.id.tv_value);
         tv.setText(String.valueOf(data));
+        view.setTag(data);
+        view.setOnClickListener(listenerInfo.onClickListener);
     }
 }

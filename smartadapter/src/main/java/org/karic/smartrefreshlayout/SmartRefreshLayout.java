@@ -73,13 +73,12 @@ public class SmartRefreshLayout extends SwipeRefreshLayout {
             return;
         }
 
+        Object obj = mAdapter.getLast();
         if (loadingMore) {
-            Object obj = mAdapter.getLast();
             if (!(obj instanceof VMFooterLoading)) {
                 mAdapter.addData(new VMFooterLoading());
             }
         } else {
-            Object obj = mAdapter.getLast();
             if (obj instanceof VMFooterLoading) {
                 mAdapter.removeLast();
             }
