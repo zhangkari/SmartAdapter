@@ -15,14 +15,38 @@
 
     </androidx.appcompat.widget.Toolbar>
 
-    <org.karic.smartrefreshlayout.SmartRefreshLayout
-        android:id="@+id/refreshLayout"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
+        <org.karic.smartrefreshlayout.SmartRefreshLayout
+            android:id="@+id/refreshLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </org.karic.smartrefreshlayout.SmartRefreshLayout>
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </org.karic.smartrefreshlayout.SmartRefreshLayout>
+
+        <LinearLayout
+            android:id="@+id/progress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="请稍后..."
+                android:textColor="@color/colorAccent" />
+        </LinearLayout>
+    </FrameLayout>
 </LinearLayout>

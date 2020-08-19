@@ -19,19 +19,19 @@ import org.karic.smartrefreshlayout.SmartRefreshLayout;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+    View progress;
     SmartRefreshLayout refreshLayout;
     SmartAdapter adapter;
-    List<Object> data;
 
     @Override
     public void onCreate(Bundle b) {
         super.onCreate(b);
         setContentView(R.layout.activity_main);
 
+        progress = findViewById(R.id.progress);
         refreshLayout = findViewById(R.id.refreshLayout);
         adapter = new SmartAdapter();
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
-        adapter.setData(data);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
@@ -80,12 +80,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void refreshData() {
+        progress.setVisibility(View.VISIBLE);
         DataModel.loadData(new DataModel.OnLoadCallback() {
             @Override
             public void onSuccess(List<Object> data) {
                 refreshLayout.refreshComplete(data, new SmartRefreshLayout.OnDataAvailableListener() {
                     @Override
                     public void onDataAvailable(List<?> data, SmartAdapter adapter) {
+                        progress.setVisibility(View.GONE);
                         adapter.refreshData(data, false);
                     }
                 });
