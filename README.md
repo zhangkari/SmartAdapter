@@ -3,10 +3,10 @@
 **SmartAdapter** 扩展RecyclerView.Adapter, 用来支持多种数据类型.  
 任何问题或建议欢迎联系我 (zhangkaric@gmail.com).
 
-<font color='#11f'>**`jcenter`**</font> `android` `v1.0.1`
+<font color='#11f'>**`jcenter`**</font> `android` `v1.0.2`
 ## 使用方法:
 ``` java
-implementation 'com.tomtom.widget.smartadapter:smartadapter:0.0.1'
+implementation 'com.tomtom.widget.smartadapter:smartadapter:1.0.2'
 
 smartAdapter.register(T.class, ViewBinder)
 smartAdapter.refreshData()
