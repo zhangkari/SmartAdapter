@@ -20,7 +20,6 @@ public abstract class ViewBinder<Bean> {
     int layout;
     protected View view;
     protected ListenerInfo listenerInfo;
-    private ViewHolder holder;
 
     public ViewBinder(@LayoutRes int layout) {
         this.layout = layout;
@@ -147,10 +146,6 @@ public abstract class ViewBinder<Bean> {
 
     public void setOnCheckedChangedListener(CompoundButton.OnCheckedChangeListener listener) {
         listenerInfo.onCheckedChangeListener = listener;
-    }
-
-    public int getPosition() {
-        return holder.getAdapterPosition();
     }
 
     protected View getView() {
