@@ -39,10 +39,14 @@ public class SmartAdapter extends RecyclerView.Adapter<ViewHolder> {
         return new ViewHolder(binder);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.binder.bindData(mData.get(position));
+
+    }
+
+    @SuppressWarnings("unchecked")
+    public final void onBindViewHolder(@NonNull ViewHolder holder, int position, @NonNull List<Object> payloads) {
+        holder.binder.bindData(mData.get(position), position, payloads);
     }
 
     public void setData(List<?> data) {

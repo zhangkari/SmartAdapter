@@ -13,6 +13,7 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.StringRes;
 
 import java.lang.reflect.Constructor;
+import java.util.List;
 
 public abstract class ViewBinder<Bean> {
     static final String TAG = "ViewBinder";
@@ -101,7 +102,7 @@ public abstract class ViewBinder<Bean> {
         view = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
     }
 
-    protected abstract void bindData(Bean data);
+    protected abstract void bindData(Bean data, int position, List<Object> payloads);
 
     @SuppressWarnings("unchecked")
     protected <T extends View> T find(@IdRes int id) {
