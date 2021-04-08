@@ -9,8 +9,8 @@ def test = rootProject.ext.test
 def USER = "zhangkari"
 def GROUP = "com.tomtom.widget.smartadapter"
 def ARTIFACT = "smartadapter"
-def VCode = 10006
-def VName = "1.0.6"
+def VCode = 10100
+def VName = "1.1.0"
 def DESCRIPTION = "An adapter that bind multiple types dynamicly"
 def URL = "https://github.com/zhangkari/smartadapter"
 
